@@ -1,41 +1,42 @@
 import React from 'react';
 import { observer } from "mobx-react-lite";
+import "./style.css"
 
-function carList({ store }) {
+function carList ({ store }) {
+
 //задаем действия
   const handleAddCar = () => {
+    const mark = prompt("Марка машины");
     const model = prompt("Модель машины");
-    const type = prompt("Тип машины");
     const userId = prompt("Владелец машины");
-
-    const car = store.createCar({ id: Date.now(), model, type });
+    const car = store.createCar({ id: Date.now(), mark, model });
     store.assignUserToCar(userId, car.id);
   };
-
+//добавляем машину
   const handleUpdateCar = (car) => {
-    car.model = prompt("Тип машины", car.type);
-    car.type = prompt("Breed of the car", car.breed);
-    const userId = prompt("Owner's Id of the car", car.owner?.id);
+    car.mark = prompt("Марка машины", car.mark);
+    car.model = prompt("Модель машины", car.model);
+    const userId = prompt("Id владельца машины", car.user?.id);
     store.updateCar(car.id, car);
-    if (userId !== car.owner?.id) {
-      store.assignOwnerToCar(userId, car.id);
+    
+    if (userId !== car.user?.id) {
+      store.assignUserToCar(userId, car.id);
     }
   };
-
+//удаляем машину
   const handleDeleteCar = (car) => {
     store.deleteCar(car.id);
   };
 
   return (
-    <div>
+    <div className='carsBody'>
       <p>{store.storeDetails}</p>
       <table>
         <thead>
           <tr>
+            <th>Id</th>
             <th>Марка машины</th>
             <th>Модель машины</th>
-            <th>Тип машины</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -43,23 +44,19 @@ function carList({ store }) {
             return (
               <tr key={car.id}>
                 <td>{car.id}</td>
-                <td>{car.name}</td>
-                <td>{car.type}</td>
+                <td>{car.mark}</td>
+                <td>{car.model}</td>
                 <td>
-                  {car.user? `${store.getUser(car.user)}`:"---"}
+                  {car.user? `${store.getUser(car.user)}`:""}
                 </td>
                 <td>
-                  <button onClick={() => handleDeleteCar(car)}>
-                    Удалить{car.name}
-                  </button>
-                  <button onClick={() => handleUpdateCar(car)}>
-                    Обновить{car.name}
-                  </button>
+                  <button onClick={() => handleDeleteCar(car)}>Удалить</button>
+                  <button onClick={() => handleUpdateCar(car)}>Обновить</button>
                 </td>
               </tr>
             );
           })}
-        </tbody>
+      </tbody>
       </table>
       <button onClick={handleAddCar}>+ Новая машина</button>
     </div>

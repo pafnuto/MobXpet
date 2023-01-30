@@ -1,7 +1,6 @@
 export interface Car {
     id: 0;
-    name: string;
-    type: string;
+    mark: string;
     model: string;
     user: any;
   }

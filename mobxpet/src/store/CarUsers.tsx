@@ -12,7 +12,7 @@ class CarUserStore {
       totalUsers: computed,
       totalСars: computed,
       storeDetails: computed,
-      getcarsByUser: action,
+      getCarsByUser: action,
       getUser: action,
       createСar: action,
       createUser: action,
@@ -20,7 +20,7 @@ class CarUserStore {
       updateUser: action,
       deleteСar: action,
       deleteUser: action,
-      assignUserTocar: action,
+      assignUserToCar: action,
     });
     autorun(this.logStoreDetails);
     runInAction(this.prefetchData);
@@ -37,21 +37,19 @@ class CarUserStore {
   }
 
   //фильтруем машины с помощью UserId
-  getcarsByUser(UserId) {
+  getCarsByUser(userId) {
     return this.cars.filter((car) => {
-      return car.User.id === UserId;
+      return car.user.id === userId;
     });
   }
 
   //задаем юзеру ид
-  getUser(UserId) {
+  getUser(userId) {
     console.log(`getUser - INIT`);
-    let User = this.users.find((User) => User.id === UserId);
+    let user = this.users.find((user) => user.id === userId);
     console.log(this.users);
-    console.log({ User });
-    return `${
-      User ? User.firstName + " " + User.lastName : "пользователь не найден"
-    }`;
+    console.log({ user });
+    return `${user ? user.firstName + " " + user.lastName : "пользователь не найден"}`;
   }
 
   createСar(car) {
@@ -59,18 +57,18 @@ class CarUserStore {
     return car;
   }
 
-  createUser(User) {
-    this.users.push(User);
-    return User;
+  createUser(user) {
+    this.users.push(user);
+    return user;
   }
 
-  updateUser(UserId, update) {
-    const UserIndexAtId = this.users.findIndex(
-      (User) => User.id === UserId
+  updateUser(userId, update) {
+    const userIndexAtId = this.users.findIndex(
+      (user) => user.id === userId
     );
-    if (UserIndexAtId > -1 && update) {
-      this.users[UserIndexAtId] = update;
-      return this.users[UserIndexAtId];
+    if (userIndexAtId > -1 && update) {
+      this.users[userIndexAtId] = update;
+      return this.users[userIndexAtId];
     }
   }
 
@@ -89,15 +87,15 @@ class CarUserStore {
     }
   }
 
-  deleteUser(UserId) {
-    const UserIndexAtId = this.users.findIndex(
-      (User) => User.id === UserId
+  deleteUser(userId) {
+    const userIndexAtId = this.users.findIndex(
+      (user) => user.id === userId
     );
-    if (UserIndexAtId > -1) {
-      this.users.splice(UserIndexAtId, 1);
+    if (userIndexAtId > -1) {
+      this.users.splice(userIndexAtId, 1);
       this.cars = this.cars.map((car) => {
-        if (car.User === UserId) {
-          car.User = null;
+        if (car.user === userId) {
+          car.user = null;
         }
         return car;
       });
@@ -105,17 +103,18 @@ class CarUserStore {
   }
 
   //задаем ид юзеру и машине
-  assignUserTocar(UserId, carId) {
+  assignUserToCar(userId, carId) {
     const carAtIndex = this.cars.find(
       (car) => parseInt(car.id) === parseInt(carId)
     );
     if (carAtIndex) {
-      carAtIndex.User = UserId;
+      carAtIndex.User = userId;
     }
   }
-//сверяемся в консоли
+
+//выводим массив в консоль
   get storeDetails() {
-    this.cars.forEach((x) => console.log("Машина: ", x.name, x.User));
+    this.cars.forEach((x) => console.log("Машина: ", x.name, x.user));
     this.users.forEach((x) => console.log("Пользователь: ", x.firstName, x.id));
     return `У нас ${this.totalСars} машин и ${this.totalUsers} пользователей`;
   }
@@ -125,14 +124,14 @@ class CarUserStore {
   };
 
   prefetchData = () => {
-    const users = [{ firstName: "Кеша", lastName: "Шниперсон", id: 1 }];
+    const users = [{ id: 1,  firstName: "Кеша", lastName: "Шниперсон"}];
 
     const cars = [
       {
         id: 1,
-        name: "Лада",
+        mark: "Лада",
         model: "Гранда",
-        UserId: 1,
+        userId: 1,
       }
     ];
 
@@ -140,10 +139,10 @@ class CarUserStore {
       users.map((car) => this.createUser(car));
       cars.map((car) => {
         this.createСar(car);
-        this.assignUserTocar(car.UserId, car.id);
+        this.assignUserToCar(car.userId, car.id);
         return car;
       });
-    }, 3000);
+    }, 1000);
   };
 }
 

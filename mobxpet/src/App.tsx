@@ -7,7 +7,7 @@ import CarUsersStore from './store/CarUsers'
 function App() {
   const store = new CarUsersStore();
   
-  return (
+return (
 <div className="app">
 <h3>Список машин</h3>
 < Cars store={store}/>
